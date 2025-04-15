@@ -33,21 +33,9 @@ jobs:
         # python -m pip install --upgrade pip
         pip install pyinstaller    
         pip install -r requirements.txt
-   
-    - name: Build executables
-      run: |
-        pyinstaller --onefile ${{ matrix.script }}.py 
        
-
-    - name: Upload to release
-      uses: JasonEtco/upload-to-release@master
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
       with:
-        args: dist/${{ matrix.script }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }
-
-    # - name: Upload artifacts
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: ${{ matrix.script }}
-    #     path: dist/${{ matrix.script }}
+        name: ${{ matrix.script }}
+        path: dist/${{ matrix.script }}
