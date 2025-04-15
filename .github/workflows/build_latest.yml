@@ -38,11 +38,19 @@ jobs:
       run: |
         pyinstaller --onefile ${{ matrix.script }}.py 
 
+        # curl -X POST \
+        #     -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+        #     -H "Content-Type: application/octet-stream" \
+        #     --data-binary @dist/${{ matrix.script }} \
+        #     "https://uploads.github.com/repos/${{ github.repository }}/actions/artifacts?name=${{ matrix.script }}" 
+
+
         curl -X POST \
-            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
-            -H "Content-Type: application/octet-stream" \
-            --data-binary @dist/${{ matrix.script }} \
-            "https://uploads.github.com/repos/${{ github.repository }}/actions/artifacts?name=${{ matrix.script }}" 
+          -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+          -F "file=@dist/${{ matrix.script }}" \
+          "https://uploads.github.com/repos/${{ github.repository }}/actions/artifacts" \
+          -F "name=${{ matrix.script }}"
+
         
     # - name: Upload artifacts
     #   uses: actions/upload-artifact@v2
