@@ -1,0 +1,44 @@
+name: Build Executables
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        type: string
+        description: 'Git ref from which to release'
+        required: true
+        default: 'dev'
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04-arm64
+    strategy:
+      matrix:
+        script: [down_aria2, nangua]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+      with:
+        ref: '${{ github.event.inputs.ref }}'
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+        
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install pyinstaller    
+        pip install -r requirements.txt
+   
+    - name: Build executables
+      run: |
+        pyinstaller --onefile ${{ matrix.script }}.py 
+
+    - name: Upload artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.script }}
+        path: dist/${{ matrix.script }}
