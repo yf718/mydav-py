@@ -37,7 +37,12 @@ jobs:
     - name: Build executables
       run: |
         pyinstaller --onefile ${{ matrix.script }}.py 
-        apk add libc6-compat
+       
+
+    - name: update lib2
+      run: |
+          apk update
+           apk add gcompat
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
