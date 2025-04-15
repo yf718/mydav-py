@@ -39,7 +39,7 @@ jobs:
     
     - name: Build executables
       run: |
-        pyinstaller --onefile  --static ${{ matrix.script }}.py 
+        pyinstaller --onefile ${{ matrix.script }}.py 
         
         
     - name: Upload artifacts
