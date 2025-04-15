@@ -7,14 +7,14 @@ on:
         type: string
         description: 'Git ref from which to release'
         required: true
-        default: 'dev'
+        default: 'main'
 
 jobs:
   build:
     runs-on: ubuntu-24.04-arm64
     strategy:
       matrix:
-        script: [down_aria2, nangua]
+        script: [down_aria2]
     
     steps:
     - name: Checkout code
