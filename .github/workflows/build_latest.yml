@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-22.04-arm
     strategy:
       matrix:
-        script: [down_aria2]
+        script: [down_aria2, test]
     
     steps:
     - name: Checkout code
