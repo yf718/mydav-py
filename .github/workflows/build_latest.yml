@@ -12,7 +12,10 @@ on:
 jobs:
   build:
     runs-on: ubuntu-22.04-arm
-    container: python:3.10-alpine
+    container: 
+      image: python:3.10-alpine
+      volumes:
+        - ${{ github.workspace }}:/app
     strategy:
       matrix:
         script: [down_aria2, test]
@@ -33,7 +36,13 @@ jobs:
         # python -m pip install --upgrade pip
         pip install pyinstaller    
         pip install -r requirements.txt
-       
+    
+    - name: Build executables
+      run: |
+        cd app
+        pyinstaller --onefile  --static ${{ matrix.script }}.py 
+        
+      
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
       with:
