@@ -39,13 +39,15 @@ jobs:
         pyinstaller --onefile ${{ matrix.script }}.py 
        
 
-    - name: update lib2
-      run: |
-          apk update
-           apk add gcompat
-
-    - name: Upload artifacts
-      uses: actions/upload-artifact@v4
+    - name: Upload to release
+      uses: JasonEtco/upload-to-release@master
       with:
-        name: ${{ matrix.script }}
-        path: dist/${{ matrix.script }}
+        args: dist/${{ matrix.script }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }
+
+    # - name: Upload artifacts
+    #   uses: actions/upload-artifact@v4
+    #   with:
+    #     name: ${{ matrix.script }}
+    #     path: dist/${{ matrix.script }}
