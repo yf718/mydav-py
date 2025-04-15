@@ -23,10 +23,10 @@ jobs:
       with:
         ref: '${{ github.event.inputs.ref }}'
 
-    # - name: update lib
-    #   run: |
-    #       apk update
-    #       apk add build-essential clang binutils-aarch64-linux-gnu
+    - name: update lib
+      run: |
+          apk update
+          apk add binutils
         
     - name: Install Dependencies
       run: |
@@ -36,7 +36,7 @@ jobs:
    
     - name: Build executables
       run: |
-        pyinstaller --onefile  --static ${{ matrix.script }}.py 
+        pyinstaller --onefile ${{ matrix.script }}.py 
 
     - name: Upload artifacts
       uses: actions/upload-artifact@v4
