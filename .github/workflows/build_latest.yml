@@ -55,9 +55,8 @@ jobs:
     #     overwrite: true
     #     file_glob: true
 
-    - name: Upload to release
-      uses: JasonEtco/upload-to-release@master
+    - name: Upload asset to release
+      uses: csexton/release-asset-action@v3
       with:
-        args:  dist/${{ matrix.script }}
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        file:  dist/${{ matrix.script }}
+        github-token: ${{ secrets.GITHUB_TOKEN }}
