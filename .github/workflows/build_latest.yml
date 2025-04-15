@@ -22,6 +22,11 @@ jobs:
       with:
         ref: '${{ github.event.inputs.ref }}'
 
+    - name: update lib
+      run: |
+          sudo apt update
+          sudo apt install libc6 libpthread-stubs0-dev zlib1g
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
@@ -29,8 +34,6 @@ jobs:
         
     - name: Install Dependencies
       run: |
-        apt update
-        apt install libc6 libpthread-stubs0-dev zlib1g
         python -m pip install --upgrade pip
         pip install pyinstaller    
         pip install -r requirements.txt
