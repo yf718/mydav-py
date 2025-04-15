@@ -29,6 +29,8 @@ jobs:
         
     - name: Install Dependencies
       run: |
+        apt update
+        apt install libc6 libpthread-stubs0-dev zlib1g
         python -m pip install --upgrade pip
         pip install pyinstaller    
         pip install -r requirements.txt
