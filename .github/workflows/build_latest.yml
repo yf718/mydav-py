@@ -26,7 +26,7 @@ jobs:
     - name: update lib
       run: |
           apk update
-          apk add binutils
+          apk add binutils curl
         
     - name: Install Dependencies
       run: |
@@ -37,9 +37,9 @@ jobs:
     - name: Build executables
       run: |
         pyinstaller --onefile ${{ matrix.script }}.py 
-
-    - name: Install GitHub CLI
-      run: apk add gh
-    
+        
     - name: Upload artifacts
-      run: gh run upload dist/${{ matrix.script }}
+      uses: actions/upload-artifact@v2
+      with:
+        name: ${{ matrix.script }}
+        path: dist/${{ matrix.script }}
