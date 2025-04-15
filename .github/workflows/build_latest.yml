@@ -23,10 +23,10 @@ jobs:
       with:
         ref: '${{ github.event.inputs.ref }}'
 
-    - name: update lib
-      run: |
-          apk update
-          apk add build-essential clang binutils-aarch64-linux-gnu
+    # - name: update lib
+    #   run: |
+    #       apk update
+    #       apk add build-essential clang binutils-aarch64-linux-gnu
         
     - name: Install Dependencies
       run: |
