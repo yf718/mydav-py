@@ -1,13 +1,8 @@
 name: Build Executables
 
 on:
-  workflow_dispatch:
-    inputs:
-      ref:
-        type: string
-        description: 'Git ref from which to release'
-        required: true
-        default: 'main'
+  release:
+    types: [published]
 
 jobs:
   build:
@@ -40,12 +35,21 @@ jobs:
         pyinstaller --onefile ${{ matrix.script }}.py 
 
 
-    - name: Upload artifacts
-      uses: actions/upload-artifact@master
-      with:
-        name: ${{ matrix.script }}
-        path: dist/${{ matrix.script }}
+    - name: zip
+      run: |
+        mkdir ${{ matrix.script }}
+        cp dist/${{ matrix.script }} ${{ matrix.script }}
+        tar -czvf ${{ matrix.script }}.tar.gz ${{ matrix.script }}
 
+
+    - name: Upload to release
+      uses: JasonEtco/upload-to-release@master
+      with:
+        args: ${{ matrix.script }}.tar.gz application/octet-stream
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    
     # - name: Upload binaries to release
     #   uses: svenstaro/upload-release-action@v2
     #   with:
