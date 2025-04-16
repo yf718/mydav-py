@@ -40,11 +40,11 @@ jobs:
         pyinstaller --onefile ${{ matrix.script }}.py 
 
 
-    # - name: Upload artifacts
-    #   uses: actions/upload-artifact@v4
-    #   with:
-    #     name: ${{ matrix.script }}
-    #     path: dist/${{ matrix.script }}
+    - name: Upload artifacts
+      uses: actions/upload-artifact@master
+      with:
+        name: ${{ matrix.script }}
+        path: dist/${{ matrix.script }}
 
     # - name: Upload binaries to release
     #   uses: svenstaro/upload-release-action@v2
@@ -55,8 +55,8 @@ jobs:
     #     overwrite: true
     #     file_glob: true
 
-    - name: Upload asset to release
-      uses: csexton/release-asset-action@v3
-      with:
-        file:  dist/${{ matrix.script }}
-        github-token: ${{ secrets.GITHUB_TOKEN }}
+    # - name: Upload asset to release
+    #   uses: csexton/release-asset-action@v3
+    #   with:
+    #     file:  dist/${{ matrix.script }}
+    #     github-token: ${{ secrets.GITHUB_TOKEN }}
