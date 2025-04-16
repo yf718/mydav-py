@@ -6,9 +6,17 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-22.04-arm
+    runs-on: ${{ matrix.runs_on }}
     container: 
       image: python:3.10-alpine
+    
+    strategy:
+      matrix:
+        include:
+          - runs_on: ubuntu-22.04   # x86 架构
+            platform: x64
+          - runs_on: ubuntu-22.04-arm  # ARM 架构
+            platform: arm64
     
     steps:
     - name: Checkout code
@@ -37,13 +45,13 @@ jobs:
         cp down_aria2/down_aria2 file
         cp ad/ad file
         cp ad2/ad2 file
-        tar -czvf file.tar.gz file
+        tar -czvf ${{ matrix.platform }}-file.tar.gz file
 
 
     - name: Upload to release
       uses: JasonEtco/upload-to-release@master
       with:
-        args: file.tar.gz application/octet-stream
+        args: ${{ matrix.platform }}-file.tar.gz application/octet-stream
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
