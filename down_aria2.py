@@ -7,6 +7,7 @@ import re
 import subprocess
 import sys
 import time
+import json
 
 import m3u8
 import requests
@@ -136,12 +137,15 @@ def kuaikan_ad_idx(segments: m3u8.SegmentList) -> []:
     return del_index
 
 
-class RequestsClient():
-    def download(self, uri, timeout=None, headers=headers, verify_ssl=False):
+class RequestsClient:
+    def __init__(self, headers, timeout=None):
+        self._headers = headers
+        self._timeout = timeout
+    def download(self, uri, timeout=None, headers={}, verify_ssl=True):
         # xmflv
         if '122.228.8.29:4433' in uri:
             headers['origin'] = "https://jx.xmflv.com"
-        o = requests.get(uri, timeout=timeout, headers=headers, verify=False, allow_redirects=True)
+        o = requests.get(uri, timeout=self._timeout, headers=self._headers, verify=False, allow_redirects=True)
         return o.text, urljoin(o.url, ".")
 
 
@@ -151,9 +155,9 @@ def down_load(url: str, tmp_idr: str, m3u8_file_path: str):
     other_command = ""
     if '122.228.8.29:4433' in url:
         other_command += '--header="origin: https://jx.xmflv.com"'
-    playlist = m3u8.load(url, http_client=RequestsClient())
+    playlist = m3u8.load(url, http_client=RequestsClient(headers=headers))
     if playlist.is_variant and len(playlist.playlists) > 0:
-        playlist = m3u8.load(playlist.playlists[0].absolute_uri, http_client=RequestsClient())
+        playlist = m3u8.load(playlist.playlists[0].absolute_uri, http_client=RequestsClient(headers=headers))
 
     key_dic = {}
     for r in playlist.keys:
@@ -303,8 +307,16 @@ def exc_order(order):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) == 4:
+    if len(sys.argv) >= 4:
         my_logger.info("python down_aria2.py \"{}\"".format("\" \"".join(sys.argv[1:])))
+        if sys.argv[4] != "":
+            try:
+                heads = json.loads(sys.argv[4])
+                if heads:
+                    for k, v in heads.items():
+                        headers[k] = v
+            except Exception as e:
+                my_logger.error(e)
         down_load(sys.argv[2].strip('"'), sys.argv[1], sys.argv[3])
     elif len(sys.argv) == 3:
         other_down(sys.argv[2].strip('"'), sys.argv[1])
