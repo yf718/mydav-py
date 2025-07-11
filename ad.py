@@ -18,7 +18,7 @@ def calculate_sha256_from_url(url):
     return sha256.hexdigest()
 
 
-def analyse(url, dir, conn):
+def analyse(url, dir):
     if os.path.exists("content.txt"):
         os.remove("content.txt")
     playlist = m3u8.load(url)
@@ -35,23 +35,52 @@ def analyse(url, dir, conn):
                      "-c --input-file={} --dir={}".format("content.txt", dir)
     )
     os.system(order)
-    for filename in os.listdir(dir):
-        file_path = os.path.join(dir, filename)
-        if os.path.isfile(file_path):
-            sha256 = calculate_sha256_from_url(file_path)
-            with conn:
-                conn.execute('''
-                           INSERT OR REPLACE INTO ads (hash,name)
-                           VALUES (?,?)''', (sha256, ad_type))
+    # for filename in os.listdir(dir):
+    #     file_path = os.path.join(dir, filename)
+    #     if os.path.isfile(file_path):
+    #         sha256 = calculate_sha256_from_url(file_path)
+    #         with conn:
+    #             conn.execute('''
+    #                        INSERT OR REPLACE INTO ads (hash,name)
+    #                        VALUES (?,?)''', (sha256, ad_type))
 
 
 if __name__ == "__main__":
     cf = configparser.ConfigParser()
     cf.read("mydav.ini", encoding="utf-8")
     m3u8dl = cf.get("sys", "m3u8dl")
-    if sys.argv[1] and sys.argv[1].startswith('http'):
+    ad_sets = set()
+    t1_sets = set()
+    if sys.argv[1] and sys.argv[1].startswith('http') and sys.argv[2] and sys.argv[2].startswith('http'):
+        try:
+            analyse(url=sys.argv[1], dir="t1")
+            for filename in os.listdir('t1'):
+                file_path = os.path.join('t1', filename)
+                if os.path.isfile(file_path):
+                    t1_sets.add(calculate_sha256_from_url(file_path))
+        finally:
+            if os.path.exists("t1"):
+                shutil.rmtree("t1")
+
+        try:
+            analyse(url=sys.argv[2], dir="t2")
+            for filename in os.listdir('t2'):
+                file_path = os.path.join('t2', filename)
+                if os.path.isfile(file_path):
+                    sha256 = calculate_sha256_from_url(file_path)
+                    if sha256 in t1_sets:
+                        ad_sets.add(sha256)
+        finally:
+            if os.path.exists("t2"):
+                shutil.rmtree("t2")
+            os.remove('content.txt')
+
+    if len(ad_sets) > 0:
+        print('analyse ad:\n')
+        print(ad_sets)
         conn = sqlite3.connect("ad.db")
         with conn:
-            conn.execute("delete from ads where name = ?", (ad_type,))
-            analyse(url=sys.argv[1], dir="tmp", conn=conn)
-            shutil.rmtree("tmp")
+            for sha256 in ad_sets:
+                conn.execute('''
+                               INSERT OR REPLACE INTO ads (hash,name)
+                               VALUES (?,?)''', (sha256, ad_type))
