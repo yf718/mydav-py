@@ -1,0 +1,39 @@
+name: Build with Nuitka (musl-compatible, Alpine)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04-arm
+    name: Build on python:3.10-alpine for musl
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build with Docker (Alpine)
+        run: |
+          docker run --rm \
+            -v "$PWD":/src -w /src \
+            python:3.10-alpine sh -c "
+              apk add --no-cache binutils curl patchelf gcc g++ musl-dev &&
+              pip install -r requirements.txt &&
+              pip install nuitka &&
+              nuitka --standalone --output-dir=dist/ad ad.py &&
+              nuitka --standalone --output-dir=dist/down_aria2 down_aria2.py &&
+              chmod +x dist/ad/ad.bin dist/down_aria2/down_aria2.bin
+            "
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ad-musl
+          path: dist/ad/
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: down_aria2-musl
+          path: dist/down_aria2/
