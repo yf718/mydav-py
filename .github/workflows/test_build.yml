@@ -51,7 +51,7 @@ jobs:
           docker run --rm \
             -v "$PWD":/src -w /src \
             python:3.10-alpine sh -c "
-              apk add --no-cache binutils curl &&
+              apk add --no-cache binutils curl patchelf &&
               pip install -r requirements.txt &&
               pip install nuitka &&
               nuitka --standalone --output-dir=dist ad.py &&
@@ -75,7 +75,7 @@ jobs:
           docker run --rm \
             -v "$PWD":/src -w /src \
             python:3.10-alpine sh -c "
-              apk add --no-cache binutils curl &&
+              apk add --no-cache binutils curl patchelf &&
               pip install -r requirements.txt &&
               pip install nuitka &&
               nuitka --standalone --output-dir=dist ad.py &&
