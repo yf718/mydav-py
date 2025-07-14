@@ -1,9 +1,13 @@
 name: Build with Nuitka (musl-compatible, Alpine)
 
 on:
-  push:
-    branches: [main]
   workflow_dispatch:
+    inputs:
+        ref:
+            type: string
+            description: 'Git ref from which to release'
+            required: true
+            default: 'main'
 
 jobs:
   build:
