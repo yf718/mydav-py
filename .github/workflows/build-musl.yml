@@ -23,10 +23,15 @@ jobs:
             -v "$PWD":/src -w /src \
             python:3.10-alpine sh -c "
               apk add --no-cache binutils curl patchelf gcc g++ musl-dev &&
-              pip install -r requirements.txt &&
-              pip install nuitka &&
-              nuitka --standalone --output-dir=dist ad.py &&
-              nuitka --standalone --output-dir=dist down_aria2.py &&
+              wget -O python-musl.tar.gz https://github.com/astral-sh/python-build-standalone/releases/download/20250630/cpython-3.10.18+20250630-x86_64-unknown-linux-musl-install_only.tar.gz &&
+              mkdir -p python-musl &&
+              tar -xzf python-musl.tar.gz -C python-musl --strip-components=1 &&
+              ./python-musl/bin/python3 -m ensurepip &&
+              ./python-musl/bin/pip3 install -U pip setuptools wheel &&
+              ./python-musl/bin/pip3 install -r requirements.txt &&
+              ./python-musl/bin/pip3 install nuitka &&
+              ./python-musl/bin/nuitka --standalone --output-dir=dist ad.py &&
+              ./python-musl/bin/nuitka --standalone --output-dir=dist down_aria2.py &&
               chmod +x dist/ad.dist/ad.bin dist/down_aria2.dist/down_aria2.bin
             "
 
