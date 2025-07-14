@@ -54,8 +54,8 @@ jobs:
               apk add --no-cache binutils curl patchelf gcc g++ musl-dev &&
               pip install -r requirements.txt &&
               pip install nuitka &&
-              nuitka --standalone --onefile --static-libpython=yes --output-dir=dist --nofollow-import-to=numpy --remove-output ad.py &&
-              nuitka --standalone --onefile --static-libpython=yes --output-dir=dist --nofollow-import-to=numpy --remove-output down_aria2.py
+              nuitka --standalone --onefile --output-dir=dist --nofollow-import-to=numpy --remove-output ad.py &&
+              nuitka --standalone --onefile  --output-dir=dist --nofollow-import-to=numpy --remove-output down_aria2.py
             "
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -78,8 +78,8 @@ jobs:
               apk add --no-cache binutils curl patchelf gcc g++ musl-dev &&
               pip install -r requirements.txt &&
               pip install nuitka &&
-              nuitka --standalone --onefile --static-libpython=yes --output-dir=dist --nofollow-import-to=numpy --remove-output ad.py &&
-              nuitka --standalone --onefile --static-libpython=yes --output-dir=dist --nofollow-import-to=numpy --remove-output down_aria2.py
+              nuitka --standalone --onefile --output-dir=dist --nofollow-import-to=numpy --remove-output ad.py &&
+              nuitka --standalone --onefile --output-dir=dist --nofollow-import-to=numpy --remove-output down_aria2.py
             "
 
       - name: Upload artifact
