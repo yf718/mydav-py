@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -33,7 +33,7 @@ jobs:
           pyinstaller --onedir --distpath=dist/x86_64/down_aria2 down_aria2.py
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ad-x86_64
           path: dist/x86_64/
@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-22.04-arm
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -61,7 +61,7 @@ jobs:
           pyinstaller --onedir --distpath=dist/arm64/down_aria2 down_aria2.py
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ad-arm64
           path: dist/arm64/
@@ -71,7 +71,7 @@ jobs:
     runs-on: ubuntu-22.04-arm
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build with Docker (Alpine)
         run: |
@@ -86,7 +86,7 @@ jobs:
             "
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ad-alpine
           path: dist/alpine/
