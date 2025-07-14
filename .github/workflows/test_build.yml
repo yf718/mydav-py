@@ -22,15 +22,15 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install pyinstaller
+      - name: Install nuitka
         run: |
           pip install -r requirements.txt
-          pip install pyinstaller
+          pip install nuitka
 
       - name: Build x86_64 executable
         run: |
-          pyinstaller --name ad --onedir --distpath=dist ad.py
-          pyinstaller --name down_aria2 --onedir --distpath=dist down_aria2.py
+          nuitka --standalone --output-dir=dist ad.py
+          nuitka --standalone --output-dir=dist down_aria2.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -53,9 +53,9 @@ jobs:
             python:3.10-alpine sh -c "
               apk add --no-cache binutils curl &&
               pip install -r requirements.txt &&
-              pip install pyinstaller &&
-              pyinstaller --name ad --onedir --distpath=dist ad.py &&
-              pyinstaller --name down_aria2 --onedir --distpath=dist down_aria2.py
+              pip install nuitka &&
+              nuitka --standalone --output-dir=dist ad.py &&
+              nuitka --standalone --output-dir=dist down_aria2.py
             "
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -77,9 +77,9 @@ jobs:
             python:3.10-alpine sh -c "
               apk add --no-cache binutils curl &&
               pip install -r requirements.txt &&
-              pip install pyinstaller &&
-              pyinstaller --name ad --onedir --distpath=dist ad.py &&
-              pyinstaller --name down_aria2 --onedir --distpath=dist down_aria2.py
+              pip install nuitka &&
+              nuitka --standalone --output-dir=dist ad.py &&
+              nuitka --standalone --output-dir=dist down_aria2.py
             "
 
       - name: Upload artifact
