@@ -29,45 +29,42 @@ jobs:
 
       - name: Build x86_64 executable
         run: |
-          pyinstaller --onedir --distpath=dist/x86_64/ad ad.py
-          pyinstaller --onedir --distpath=dist/x86_64/down_aria2 down_aria2.py
+          pyinstaller --onedir --distpath=dist/x86_64 ad.py
+          pyinstaller --onedir --distpath=dist/x86_64 down_aria2.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ad-x86_64
+          name: x86_64
           path: dist/x86_64/
 
-  build-arm64:
-    name: Build ARM64 (glibc)
-    runs-on: ubuntu-22.04-arm
+
+  build-x64-alpine:
+    name: Build x86_64 (musl/Alpine)
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
-
-      - name: Install pyinstaller
+      - name: Build with Docker (Alpine)
         run: |
-          pip install -r requirements.txt
-          pip install pyinstaller
-
-      - name: Build ARM64 executable
-        run: |
-          pyinstaller --onedir --distpath=dist/arm64/ad ad.py
-          pyinstaller --onedir --distpath=dist/arm64/down_aria2 down_aria2.py
-
+          docker run --rm \
+            -v "$PWD":/src -w /src \
+            python:3.10-alpine sh -c "
+              apk add --no-cache binutils curl &&
+              pip install -r requirements.txt &&
+              pip install pyinstaller &&
+              pyinstaller --onedir --distpath=dist/x64_alpine ad.py &&
+              pyinstaller --onedir --distpath=dist/x64_alpine down_aria2.py
+            "
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ad-arm64
-          path: dist/arm64/
+          name: x64_alpine
+          path: dist/x64_alpine/
 
   build-alpine:
-    name: Build x86_64 (musl/Alpine)
+    name: Build arm64 (musl/Alpine)
     runs-on: ubuntu-22.04-arm
     steps:
       - name: Checkout
@@ -81,12 +78,12 @@ jobs:
               apk add --no-cache binutils curl &&
               pip install -r requirements.txt &&
               pip install pyinstaller &&
-              pyinstaller --onedir --distpath=dist/alpine/ad ad.py &&
-              pyinstaller --onedir --distpath=dist/alpine/down_aria2 down_aria2.py
+              pyinstaller --onedir --distpath=dist/alpine ad.py &&
+              pyinstaller --onedir --distpath=dist/alpine down_aria2.py
             "
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ad-alpine
+          name: arm64-alpine
           path: dist/alpine/
