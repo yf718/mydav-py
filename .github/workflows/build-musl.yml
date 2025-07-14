@@ -25,19 +25,19 @@ jobs:
               apk add --no-cache binutils curl patchelf gcc g++ musl-dev &&
               pip install -r requirements.txt &&
               pip install nuitka &&
-              nuitka --standalone --output-dir=dist/ad ad.py &&
-              nuitka --standalone --output-dir=dist/down_aria2 down_aria2.py &&
-              chmod +x dist/ad/ad.bin dist/down_aria2/down_aria2.bin
+              nuitka --standalone --output-dir=dist ad.py &&
+              nuitka --standalone --output-dir=dist down_aria2.py &&
+              chmod +x dist/ad.dist/ad.bin dist/down_aria2.dist/down_aria2.bin
             "
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ad-musl
-          path: dist/ad/
+          path: dist/ad.dist/
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: down_aria2-musl
-          path: dist/down_aria2/
+          path: dist/down_aria2.dist/
