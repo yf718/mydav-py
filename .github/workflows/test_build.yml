@@ -29,14 +29,14 @@ jobs:
 
       - name: Build x86_64 executable
         run: |
-          pyinstaller --onedir --distpath=dist/x86_64 ad.py
-          pyinstaller --onedir --distpath=dist/x86_64 down_aria2.py
+          pyinstaller --name ad --onedir --distpath=dist ad.py
+          pyinstaller --name down_aria2 --onedir --distpath=dist down_aria2.py
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: x86_64
-          path: dist/x86_64/
+          path: dist/
 
 
   build-x64-alpine:
@@ -54,14 +54,14 @@ jobs:
               apk add --no-cache binutils curl &&
               pip install -r requirements.txt &&
               pip install pyinstaller &&
-              pyinstaller --onedir --distpath=dist/x64_alpine ad.py &&
-              pyinstaller --onedir --distpath=dist/x64_alpine down_aria2.py
+              pyinstaller --name ad --onedir --distpath=dist ad.py &&
+              pyinstaller --name down_aria2 --onedir --distpath=dist down_aria2.py
             "
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: x64_alpine
-          path: dist/x64_alpine/
+          path: dist/
 
   build-alpine:
     name: Build arm64 (musl/Alpine)
@@ -78,12 +78,12 @@ jobs:
               apk add --no-cache binutils curl &&
               pip install -r requirements.txt &&
               pip install pyinstaller &&
-              pyinstaller --onedir --distpath=dist/alpine ad.py &&
-              pyinstaller --onedir --distpath=dist/alpine down_aria2.py
+              pyinstaller --name ad --onedir --distpath=dist ad.py &&
+              pyinstaller --name down_aria2 --onedir --distpath=dist down_aria2.py
             "
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: arm64-alpine
-          path: dist/alpine/
+          path: dist/
