@@ -1,5 +1,4 @@
-name: Build Python Executables
-
+name: Build with Nuitka
 on:
   workflow_dispatch:
     inputs:
@@ -10,8 +9,8 @@ on:
             default: 'main'
 
 jobs:
-  build-x86_64:
-    name: Build x86_64 (glibc)
+  build:
+    name: Build ${{ matrix.platform }}
     runs-on: ${{ matrix.runs_on }}
     strategy:
       matrix:
