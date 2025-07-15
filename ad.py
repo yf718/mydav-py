@@ -1,8 +1,8 @@
+import argparse
 import configparser
 import hashlib
 import os
 import shutil
-import sys
 
 import m3u8
 import sqlite3
@@ -51,9 +51,17 @@ if __name__ == "__main__":
     m3u8dl = cf.get("sys", "m3u8dl")
     ad_sets = set()
     t1_sets = set()
-    if sys.argv[1] and sys.argv[1].startswith('http') and sys.argv[2] and sys.argv[2].startswith('http'):
+    parser = argparse.ArgumentParser(
+        description=''
+    )
+    parser.add_argument('-u1', help='地址1', default='')
+    parser.add_argument('-u2', help='地址2', default='')
+    args = parser.parse_args()
+    u1 = args.u1
+    u2 = args.u2
+    if u1 and u1.startswith('http') and u2 and u2.startswith('http'):
         try:
-            analyse(url=sys.argv[1], dir="t1")
+            analyse(url=u1, dir="t1")
             for filename in os.listdir('t1'):
                 file_path = os.path.join('t1', filename)
                 if os.path.isfile(file_path):
@@ -63,7 +71,7 @@ if __name__ == "__main__":
                 shutil.rmtree("t1")
 
         try:
-            analyse(url=sys.argv[2], dir="t2")
+            analyse(url=u2, dir="t2")
             for filename in os.listdir('t2'):
                 file_path = os.path.join('t2', filename)
                 if os.path.isfile(file_path):
