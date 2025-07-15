@@ -1,3 +1,4 @@
+import argparse
 import base64
 import configparser
 import logging
@@ -307,24 +308,70 @@ def exc_order(order):
 
 
 if __name__ == '__main__':
-    if len(sys.argv) >= 4:
-        my_logger.info("python down_aria2.py \"{}\"".format("\" \"".join(sys.argv[1:])))
-        if sys.argv[4] != "":
-            try:
-                heads = json.loads(sys.argv[4])
-                if heads:
-                    for k, v in heads.items():
-                        headers[k] = v
-            except Exception as e:
-                my_logger.error(e)
-        down_load(sys.argv[2].strip('"'), sys.argv[1], sys.argv[3])
-    elif len(sys.argv) == 3:
-        other_down(sys.argv[2].strip('"'), sys.argv[1])
-    elif len(sys.argv) == 2:
-        arg = sys.argv[1]
-        if os.path.exists(arg):
-            if arg.endswith('content.txt'):
-                exec_res = exec_down(arg, os.path.dirname(arg), "", "")
-                print("down count ", exec_res)
-            else:
-                kill_down(arg)
+    parser = argparse.ArgumentParser(
+        description=''
+    )
+
+    parser.add_argument('-u', help='地址', default='')
+    parser.add_argument('-H', help='请求头', default='')
+    parser.add_argument('-t', help='缓存文件路径', default='')
+    parser.add_argument('-m', help='m3u8文件地址', default='')
+    parser.add_argument('-c', help='context文件路径', default='')
+
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--other', action='store_true', help='快速模式')
+    group.add_argument('--kill', action='store_true', help='慢速模式')
+
+    args = parser.parse_args()
+    my_logger.info("{}".format(args))
+
+    tmp_dir = args.t
+    url = args.u
+    if url:
+        url = url.strip('"')
+    m3u8_file_path = args.m
+    content_path = args.c
+    if args.H:
+        try:
+            heads = json.loads(args.H)
+            if heads:
+                for k, v in heads.items():
+                    headers[k] = v
+        except Exception as e:
+            my_logger.error(e)
+
+    if args.kill:
+        kill_down(tmp_dir)
+    elif args.other:
+        other_down(url, tmp_dir)
+    elif content_path:
+        if content_path.endswith('content.txt') and os.path.exists(content_path):
+            exec_res = exec_down(content_path, os.path.dirname(content_path), "", "")
+            print("down count ", exec_res)
+        else:
+            print("{} is not content.txt".format(content_path))
+    else:
+        if url and tmp_dir and m3u8_file_path:
+            down_load(url, tmp_dir, m3u8_file_path)
+
+    # if len(sys.argv) >= 4:
+    #     my_logger.info("python down_aria2.py \"{}\"".format("\" \"".join(sys.argv[1:])))
+    #     if sys.argv[4] != "":
+    #         try:
+    #             heads = json.loads(sys.argv[4])
+    #             if heads:
+    #                 for k, v in heads.items():
+    #                     headers[k] = v
+    #         except Exception as e:
+    #             my_logger.error(e)
+    #     down_load(sys.argv[2].strip('"'), sys.argv[1], sys.argv[3])
+    # elif len(sys.argv) == 3:
+    #     other_down(sys.argv[2].strip('"'), sys.argv[1])
+    # elif len(sys.argv) == 2:
+    #     arg = sys.argv[1]
+    #     if os.path.exists(arg):
+    #         if arg.endswith('content.txt'):
+    #             exec_res = exec_down(arg, os.path.dirname(arg), "", "")
+    #             print("down count ", exec_res)
+    #         else:
+    #             kill_down(arg)
