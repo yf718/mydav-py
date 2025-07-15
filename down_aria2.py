@@ -315,7 +315,7 @@ if __name__ == '__main__':
     parser.add_argument('-u', help='地址', default='')
     parser.add_argument('-H', help='请求头', default='')
     parser.add_argument('-t', help='缓存文件路径', default='')
-    parser.add_argument('-m', help='m3u8文件地址', default='')
+    parser.add_argument('-M', help='m3u8文件地址', default='')
     parser.add_argument('-c', help='context文件路径', default='')
 
     group = parser.add_mutually_exclusive_group()
@@ -329,7 +329,7 @@ if __name__ == '__main__':
     url = args.u
     if url:
         url = url.strip('"')
-    m3u8_file_path = args.m
+    m3u8_file_path = args.M
     content_path = args.c
     if args.H:
         try:
