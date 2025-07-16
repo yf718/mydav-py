@@ -5,12 +5,12 @@ on:
 
 jobs:
   build-python:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04-arm
     name: Build static musl Python (aarch64)
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v3
+    #   - name: Checkout
+    #     uses: actions/checkout@v3
 
       - name: Install musl-cross-make
         run: |
@@ -59,7 +59,7 @@ jobs:
           path: python-musl-aarch64.tar.gz
 
   build-binary:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04-arm
     name: Build Nuitka binary using static Python
     needs: build-python
 
