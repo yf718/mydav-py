@@ -77,8 +77,9 @@ def remove_ad(base_url: str, segments: m3u8.SegmentList):
     # ad_num = remove_ad1(base_url, segments)
     # if ad_num == 0:
     #     return remove_ad2(base_url)
-    # return ''
-    return remove_ad2(base_url)
+    remove_ad1(base_url, segments)
+    return ''
+    # return remove_ad2(base_url)
 
 
 def get_ad_index(base_url: str, segments: m3u8.SegmentList) -> []:
@@ -86,23 +87,26 @@ def get_ad_index(base_url: str, segments: m3u8.SegmentList) -> []:
         return ffzy_ad_idx(segments)
     elif re.search(r'lz-?cdn', base_url) or re.search(r'cdn-?lz', base_url):
         return ffzy_ad_idx(segments)
-    elif 'kuaikan' in base_url:
-        return kuaikan_ad_idx(segments)
-    elif 'suonizy' in base_url:
-        return kuaikan_ad_idx(segments)
+    # elif 'kuaikan' in base_url:
+    #     return kuaikan_ad_idx(segments)
+    # elif 'suonizy' in base_url:
+    #     return kuaikan_ad_idx(segments)
     return []
 
 
 def ffzy_ad_idx(segments: m3u8.SegmentList) -> []:
-    file_name, _ = os.path.splitext(segments[0].uri)
     del_index = []
-    zero_size = len(str(len(segments)))
-    zeros_string = '0' * zero_size
-    if file_name.endswith(zeros_string):
-        a = file_name[0:-zero_size]
-        for i, segment in enumerate(segments):
-            if a not in segment.uri:
-                del_index.append(i)
+    last_index = 0
+    for index, r in enumerate(segments):
+        txt = '{}'.format(r)
+        if txt.startswith("#EXT-X-DISCONTINUITY"):
+            if last_index != 0:
+                if index - last_index == 5:
+                    for range_index in range(last_index, index):
+                        del_index.append(range_index)
+                last_index = 0
+                continue
+            last_index = index
     return del_index
 
 
