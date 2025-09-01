@@ -16,10 +16,10 @@ jobs:
     strategy:
       matrix:
         include:
-          - runs_on: ubuntu-22.04-arm
+          - runs_on: ubuntu-24.04-arm
             platform: arm64
             python_url: https://github.com/astral-sh/python-build-standalone/releases/download/20250828/cpython-3.10.18+20250828-aarch64-unknown-linux-musl-install_only.tar.gz
-          - runs_on: ubuntu-22.04
+          - runs_on: ubuntu-24.04
             platform: x64
             python_url: https://github.com/astral-sh/python-build-standalone/releases/download/20250828/cpython-3.10.18+20250828-x86_64-unknown-linux-musl-install_only.tar.gz
     steps:
