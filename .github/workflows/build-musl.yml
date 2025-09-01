@@ -47,8 +47,8 @@ jobs:
               ./python-musl/bin/pip3 install -U pip setuptools wheel &&
               ./python-musl/bin/pip3 install -r requirements.txt &&
               ./python-musl/bin/pip3 install nuitka &&
-              ./python-musl/bin/nuitka --standalone --onefile --output-dir=dist --static-libpython=no --linux-no-check-glibc --remove-output ad.py &&
-              ./python-musl/bin/nuitka --standalone --onefile --output-dir=dist --static-libpython=no --linux-no-check-glibc --remove-output down_aria2.py
+              ./python-musl/bin/nuitka --standalone --onefile --output-dir=dist --static-libpython=no --no-check-for-updates --remove-output ad.py &&
+              ./python-musl/bin/nuitka --standalone --onefile --output-dir=dist --static-libpython=no --no-check-for-updates --remove-output down_aria2.py
             "
       - name: Upload artifact
         uses: actions/upload-artifact@v4
