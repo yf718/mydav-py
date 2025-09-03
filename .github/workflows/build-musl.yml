@@ -23,7 +23,7 @@ jobs:
         run: |
           docker run --rm --platform=linux/arm64 \
             -v "$PWD":/src -w /src \
-            alpine:3.20 sh -c "
+            alpine:3.19 sh -c "
               set -e
               apk add --no-cache \
                 python3 py3-pip py3-virtualenv py3-dev \
