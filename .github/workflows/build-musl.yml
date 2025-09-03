@@ -26,7 +26,7 @@ jobs:
             alpine:3.19 sh -c "
               set -e
               apk add --no-cache \
-                python3 py3-pip py3-virtualenv py3-dev \
+                python3 py3-pip py3-virtualenv python3-dev \
                 gcc g++ musl musl-dev binutils patchelf make \
                 curl
 
