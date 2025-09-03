@@ -20,7 +20,7 @@ jobs:
             platform: arm64
             python_url: https://github.com/astral-sh/python-build-standalone/releases/download/20250902/cpython-3.10.18+20250902-aarch64-unknown-linux-musl-install_only_stripped.tar.gz
           - runs_on: ubuntu-24.04
-            platform: x64
+            platform: amd64
             python_url: https://github.com/astral-sh/python-build-standalone/releases/download/20250828/cpython-3.10.18+20250828-x86_64-unknown-linux-musl-install_only.tar.gz
     steps:
       - name: Checkout
@@ -39,7 +39,7 @@ jobs:
 
       - name: Build
         run: |
-           docker run --rm \
+           docker run --rm --platform=linux/${{ matrix.platform }} \
             -v "$PWD":/src -w /src \
              alpine:latest sh -c "
                apk add --no-cache binutils curl patchelf gcc g++ musl-dev &&
