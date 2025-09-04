@@ -15,10 +15,26 @@ jobs:
           
           docker run --rm -v $PWD:/work termux/package-builder:latest bash -c "
             cd /work
-            pkg update && pkg upgrade -y
-            pkg install python python-pip -y
-            pip install nuitka
-            python -m nuitka --standalone --onefile down_aria2.py
+            # 更新系统并安装依赖（使用apt而非pkg）
+            apt update && apt upgrade -y
+            apt install -y python3 python3-pip python3-venv
+            
+            # 创建虚拟环境以绕过系统Python限制
+            python3 -m venv venv
+            source venv/bin/activate
+            
+            # 安装Nuitka（允许系统级安装）
+            pip install nuitka --break-system-packages
+            
+            # 打包Python脚本
+            python -m nuitka --standalone --onefile \
+              --output-dir=dist \
+              --nofollow-import-to=numpy \
+              --remove-output \
+              down_aria2.py
+            
+            # 复制输出文件到挂载目录
+            cp dist/down_aria2 /work/
           "
 
       - name: Upload artifact
