@@ -17,7 +17,7 @@ jobs:
             cd /work
             # 更新系统并安装依赖（使用apt而非pkg）
             apt update && apt upgrade -y
-            apt install -y python3 python3-pip python3-venv
+            apt install -y python3 python3-pip python3-venv python3-dev gcc g++ make
             
             # 创建虚拟环境以绕过系统Python限制
             python3 -m venv venv
@@ -31,6 +31,7 @@ jobs:
               --output-dir=dist \
               --nofollow-import-to=numpy \
               --remove-output \
+              --static-libpython=no \
               down_aria2.py
             
             # 复制输出文件到挂载目录
