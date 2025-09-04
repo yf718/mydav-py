@@ -1,3 +1,4 @@
+
 name: Build Nuitka Binary for OpenWrt aarch64-musl
 
 on:
@@ -7,117 +8,31 @@ on:
 
 jobs:
   build:
-    name: Build arm64 (musl/OpenWrt)
+    name: Build arm64 (musl/Alpine)
     runs-on: ubuntu-22.04-arm
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install complete cross-compilation toolchain
+      - name: Download musl-native Python 3.10
         run: |
-          sudo apt-get update
-          # 安装核心交叉编译工具（包含aarch64-linux-musl-readelf等必需工具）
-          sudo apt-get install -y \
-            musl-tools \
-            gcc-aarch64-linux-musl \
-            g++-aarch64-linux-musl \
-            binutils-aarch64-linux-musl \
-            wget tar make libssl-dev zlib1g-dev
+          wget -O python-musl.tar.gz https://github.com/astral-sh/python-build-standalone/releases/download/20250902/cpython-3.10.18+20250902-aarch64-unknown-linux-musl-install_only.tar.gz
+          mkdir -p python-musl
+          tar -xzf python-musl.tar.gz -C python-musl --strip-components=1
 
-          # 验证关键工具是否存在
-          if ! command -v aarch64-linux-musl-readelf &> /dev/null; then
-            echo "Error: aarch64-linux-musl-readelf not found"
-            exit 1
-          fi
-          if ! command -v aarch64-linux-musl-ar &> /dev/null; then
-            echo "Error: aarch64-linux-musl-ar not found"
-            exit 1
-          fi
-
-      - name: Compile static Python 3.10 for musl
-        run: |
-          mkdir -p python-build && cd python-build
-          
-          # 下载Python源码
-          wget https://www.python.org/ftp/python/3.10.18/Python-3.10.18.tgz
-          tar -xzf Python-3.10.18.tgz && cd Python-3.10.18
-          
-          # 配置编译参数（明确指定交叉工具链）
-          ./configure \
-            --prefix=/usr/local/python-musl \
-            --host=aarch64-linux-musl \
-            --build=aarch64-linux-gnu \
-            --enable-optimizations \
-            --with-lto \
-            --disable-shared \
-            --enable-static \
-            --without-ensurepip \
-            --with-openssl=/usr \
-            --with-zlib=/usr \
-            # 强制使用带前缀的工具链组件
-            AR=aarch64-linux-musl-ar \
-            RANLIB=aarch64-linux-musl-ranlib \
-            READELF=aarch64-linux-musl-readelf \
-            CC=aarch64-linux-musl-gcc \
-            CXX=aarch64-linux-musl-g++ \
-            CFLAGS="-Os -static -fPIC" \
-            LDFLAGS="-static"
-          
-          # 编译并安装到临时目录
-          make -j$(nproc)
-          make install DESTDIR=$(pwd)/../install
-          
-          # 复制到项目目录
-          cp -r ../install/usr/local/python-musl ../../python-musl
-          
-          # 验证静态库是否生成
-          if [ ! -f "../../python-musl/lib/libpython3.10.a" ]; then
-            echo "Error: Static libpython not generated"
-            exit 1
-          fi
-
-      - name: Build with Nuitka in Alpine container
+      - name: Build with Docker (Alpine)
         run: |
           docker run --rm \
             -v "$PWD":/src -w /src \
-            alpine:3.19 sh -c "
-              # 安装容器内依赖
-              apk add --no-cache \
-                binutils patchelf gcc musl-dev \
-                aarch64-linux-musl-gcc aarch64-linux-musl-binutils \
-                openssl-dev zlib-dev
-              
-              # 配置Python环境
-              /src/python-musl/bin/python3 -m ensurepip --default-pip
-              /src/python-musl/bin/pip3 install --upgrade pip
-              
-              # 安装依赖和Nuitka
-              /src/python-musl/bin/pip3 install -r requirements.txt
-              /src/python-musl/bin/pip3 install nuitka==2.7.13
-              
-              # 执行Nuitka编译
-              CC=aarch64-linux-musl-gcc \
-              /src/python-musl/bin/nuitka \
-                --standalone \
-                --onefile \
-                --static-libpython=yes \
-                --output-dir=dist \
-                --nofollow-import-to=numpy \
-                --remove-output \
-                --python-exe=/src/python-musl/bin/python3 \
-                down_aria2.py
-              
-              # 验证输出
-              if [ ! -f "/src/dist/down_aria2" ]; then
-                echo "Error: Nuitka binary not generated"
-                exit 1
-              fi
+            alpine:latest sh -c "
+              apk add --no-cache binutils curl patchelf gcc musl-dev &&
+              ./python-musl/bin/pip3 install -r requirements.txt &&
+              ./python-musl/bin/pip3 install nuitka &&
+              ./python-musl/bin/nuitka --standalone --onefile --output-dir=dist --nofollow-import-to=numpy --remove-output down_aria2.py
             "
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: aarch64-openwrt-binary
+          name: arm64-alpine
           path: dist/
-          retention-days: 14
-    
