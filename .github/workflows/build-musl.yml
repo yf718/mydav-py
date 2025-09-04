@@ -24,8 +24,8 @@ jobs:
         run: |
           docker run --rm \
             -v "$PWD":/src -w /src \
-            python:3.10-alpine sh -c "
-              apk add --no-cache binutils curl patchelf gcc musl-gcc musl-dev musl-tools &&
+            alpine:latest sh -c "
+              apk add --no-cache binutils curl patchelf gcc musl-dev &&
               ./python-musl/bin/python3 install -r requirements.txt &&
               ./python-musl/bin/python3 install nuitka &&
               CC=musl-gcc ./python-musl/bin/nuitka --standalone --onefile --static-libpython=yes --output-dir=dist --nofollow-import-to=numpy --remove-output down_aria2.py
