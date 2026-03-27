@@ -77,7 +77,7 @@ def remove_ad(base_url: str, segments: m3u8.SegmentList):
     # ad_num = remove_ad1(base_url, segments)
     # if ad_num == 0:
     #     return remove_ad2(base_url)
-    remove_ad1(base_url, segments)
+    # remove_ad1(base_url, segments)
     return ''
     # return remove_ad2(base_url)
 
